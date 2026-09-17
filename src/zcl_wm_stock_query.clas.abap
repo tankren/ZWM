@@ -31,8 +31,8 @@ CLASS zcl_wm_stock_query DEFINITION
     TYPES ty_r_lenum TYPE RANGE OF lenum.
     TYPES ty_r_herkl TYPE RANGE OF herkl.
 
-    "! Selection criteria of the cockpit. LGNUM is mandatory, every other
-    "! criterion is optional.
+    " Selection criteria of the cockpit. LGNUM is mandatory, every other
+    " criterion is optional.
     TYPES: BEGIN OF ty_sel,
              lgnum TYPE lgnum,
              matnr TYPE ty_r_matnr,
@@ -61,6 +61,11 @@ CLASS zcl_wm_stock_query DEFINITION
       RETURNING VALUE(rt_stock) TYPE tt_stock.
 
   PRIVATE SECTION.
+    "! The raw quant rows, before they are enriched for display. A named type
+    "! is required because a RETURNING parameter cannot carry an inline table
+    "! type.
+    TYPES ty_lqua_tt TYPE STANDARD TABLE OF lqua WITH EMPTY KEY.
+
     TYPES: BEGIN OF ty_waers,
              bwkey TYPE bwkey,
              waers TYPE waers,
@@ -72,8 +77,7 @@ CLASS zcl_wm_stock_query DEFINITION
 
     METHODS read_stock
       IMPORTING is_sel         TYPE ty_sel
-      RETURNING VALUE(rt_lqua) TYPE STANDARD TABLE OF lqua
-                               WITH EMPTY KEY.
+      RETURNING VALUE(rt_lqua) TYPE ty_lqua_tt.
 
     METHODS enrich_material
       CHANGING ct_stock TYPE tt_stock.

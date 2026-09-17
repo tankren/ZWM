@@ -21,10 +21,14 @@
 *&---------------------------------------------------------------------*
 REPORT zwm_stock_cockpit_1p.
 
+* The classic work areas behind the selection screen. TABLES is required so
+* that the FOR clauses of the SELECT-OPTIONS below can resolve their fields.
+TABLES: lqua, mara.
+
 *----------------------------------------------------------------------*
 * Selection screen
 *----------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK blk_sel WITH FRAME TITLE 'Stock selection'.
+SELECTION-SCREEN BEGIN OF BLOCK blk_sel WITH FRAME TITLE text-001.
   PARAMETERS p_lgnum TYPE lgnum OBLIGATORY.
   SELECT-OPTIONS s_matnr FOR lqua-matnr.
   SELECT-OPTIONS s_werks FOR lqua-werks.
@@ -35,7 +39,7 @@ SELECTION-SCREEN BEGIN OF BLOCK blk_sel WITH FRAME TITLE 'Stock selection'.
   SELECT-OPTIONS s_charg FOR lqua-charg.
 SELECTION-SCREEN END OF BLOCK blk_sel.
 
-SELECTION-SCREEN BEGIN OF BLOCK blk_add WITH FRAME TITLE 'Additional filter'.
+SELECTION-SCREEN BEGIN OF BLOCK blk_add WITH FRAME TITLE text-002.
   SELECT-OPTIONS s_lgtyp FOR lqua-lgtyp.
   SELECT-OPTIONS s_lgpla FOR lqua-lgpla.
   SELECT-OPTIONS s_wenum FOR lqua-wenum.
@@ -162,14 +166,14 @@ FORM process_action USING iv_action_id TYPE zwm_action_id.
   ls_action = go_config->get_action( iv_action_id ).
   IF ls_action IS INITIAL.
     go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-action_not_configured
-                       iv_v1     = iv_action_id ).
+                       iv_v1     = CONV symsgv( iv_action_id ) ).
     RETURN.
   ENDIF.
 
   IF go_config->is_authorized( ls_action ) = abap_false.
     go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-no_authority
-                       iv_v1     = sy-uname
-                       iv_v2     = iv_action_id ).
+                       iv_v1     = CONV symsgv( sy-uname )
+                       iv_v2     = CONV symsgv( iv_action_id ) ).
     RETURN.
   ENDIF.
 
@@ -183,14 +187,14 @@ FORM process_action USING iv_action_id TYPE zwm_action_id.
     WHEN 'TRANSFER' OR 'SCRAP'.
       PERFORM execute_movement USING ls_stock ls_action.
     WHEN 'BLOCK'.
-      PERFORM execute_block USING ls_stock.
+      PERFORM execute_block USING ls_stock ls_action.
     WHEN 'UNBLOCK'.
-      PERFORM execute_release USING ls_stock.
+      PERFORM execute_release USING ls_stock ls_action.
     WHEN 'INFO'.
       PERFORM show_block_reasons USING ls_stock.
     WHEN OTHERS.
       go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-action_not_configured
-                         iv_v1     = iv_action_id ).
+                         iv_v1     = CONV symsgv( iv_action_id ) ).
   ENDCASE.
 ENDFORM.
 
@@ -199,53 +203,45 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM execute_movement USING is_stock  TYPE zwm_quan_1s
                             is_action TYPE zcl_wm_action_config=>ty_action.
-  DATA: lt_fields  TYPE TABLE OF sval,
-        ls_request TYPE zcl_wm_stock_action=>ty_request,
+  DATA: ls_request TYPE zcl_wm_stock_action=>ty_request,
         ls_result  TYPE zcl_wm_stock_action=>ty_result,
         lv_bwart   TYPE bwart,
-        lv_ok      TYPE abap_bool.
+        lv_ok      TYPE abap_bool,
+        lv_title   TYPE string.
 
   lv_bwart = is_action-bwart.
   IF lv_bwart IS INITIAL.
     lv_bwart = '999'.
   ENDIF.
 
+  CLEAR gt_fields.
+
   PERFORM add_popup_field USING 'LQUA' 'GESME' 'Requested quantity'
-                                is_stock-verme 'X'
-                          CHANGING lt_fields.
+                                is_stock-verme 'X'.
 
   PERFORM add_popup_field USING 'T156' 'BWART' 'Movement type'
-                                lv_bwart 'X'
-                          CHANGING lt_fields.
+                                lv_bwart 'X'.
 
   PERFORM add_popup_field USING 'LQUA' 'LGORT' 'Destination storage location'
-                                is_stock-lgort ''
-                          CHANGING lt_fields.
+                                is_stock-lgort ''.
 
   PERFORM add_popup_field USING 'LQUA' 'LGTYP' 'Destination storage type'
-                                is_stock-lgtyp ''
-                          CHANGING lt_fields.
+                                is_stock-lgtyp ''.
 
   PERFORM add_popup_field USING 'LQUA' 'LGPLA' 'Destination storage bin'
-                                is_stock-lgpla ''
-                          CHANGING lt_fields.
+                                is_stock-lgpla ''.
 
-  PERFORM show_popup USING 'Inventory control station' lt_fields
-                      CHANGING lv_ok.
+  lv_title = 'Inventory control station'.
+  PERFORM show_popup USING lv_title CHANGING lv_ok.
   IF lv_ok = abap_false.
     RETURN.
   ENDIF.
 
-  PERFORM get_popup_value USING lt_fields 'GESME'
-                           CHANGING ls_request-quantity.
-  PERFORM get_popup_value USING lt_fields 'BWART'
-                           CHANGING ls_request-bwart.
-  PERFORM get_popup_value USING lt_fields 'LGORT'
-                           CHANGING ls_request-dest_lgort.
-  PERFORM get_popup_value USING lt_fields 'LGTYP'
-                           CHANGING ls_request-dest_lgtyp.
-  PERFORM get_popup_value USING lt_fields 'LGPLA'
-                           CHANGING ls_request-dest_lgpla.
+  PERFORM get_popup_value USING 'GESME' CHANGING ls_request-quantity.
+  PERFORM get_popup_value USING 'BWART' CHANGING ls_request-bwart.
+  PERFORM get_popup_value USING 'LGORT' CHANGING ls_request-dest_lgort.
+  PERFORM get_popup_value USING 'LGTYP' CHANGING ls_request-dest_lgtyp.
+  PERFORM get_popup_value USING 'LGPLA' CHANGING ls_request-dest_lgpla.
 
   ls_result = go_action->execute( is_stock   = is_stock
                                   is_action  = is_action
@@ -260,72 +256,77 @@ ENDFORM.
 *----------------------------------------------------------------------*
 * Block - add a new layer, or change the reason of an open layer
 *----------------------------------------------------------------------*
-FORM execute_block USING is_stock TYPE zwm_quan_1s.
+FORM execute_block USING is_stock  TYPE zwm_quan_1s
+                        is_action TYPE zcl_wm_action_config=>ty_action.
   DATA: lt_layers  TYPE zcl_wm_stock_block=>tt_layer,
-        lt_fields  TYPE TABLE OF sval,
         ls_request TYPE zcl_wm_stock_block=>ty_block_request,
         ls_result  TYPE zcl_wm_stock_block=>ty_result,
+        lv_bwart   TYPE bwart,
         lv_open    TYPE i,
         lv_layer   TYPE zwm_layer,
         lv_chosen  TYPE zwm_layer,
-        lv_ok      TYPE abap_bool.
+        lv_ok      TYPE abap_bool,
+        lv_title   TYPE string.
+
+  lv_bwart = is_action-bwart.
+  IF lv_bwart IS INITIAL.
+    lv_bwart = zcl_wm_stock_block=>c_bwart_block.
+  ENDIF.
 
   lt_layers = go_block->get_open_layers( is_stock ).
   lv_open   = lines( lt_layers ).
 
   IF lv_open >= zcl_wm_stock_block=>c_max_layers.
     go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-max_layers_reached
-                       iv_v1     = is_stock-lqnum ).
+                       iv_v1     = CONV symsgv( is_stock-lqnum ) ).
     RETURN.
   ENDIF.
 
   IF lt_layers IS NOT INITIAL.
-    PERFORM show_layers USING lt_layers
-          |Existing block layers of quant { is_stock-lqnum }|.
+    lv_title = |Existing block layers of quant { is_stock-lqnum }|.
+    PERFORM show_layers USING lt_layers lv_title.
   ENDIF.
 
   lv_layer = go_block->next_free_layer( lv_open ).
 
+  CLEAR gt_fields.
+
   PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'LAYER'
                                 'Layer to change (blank = add new layer)'
-                                lv_layer ''
-                          CHANGING lt_fields.
+                                lv_layer ''.
 
-  PERFORM add_popup_field USING 'ZWM_BLOCK_RSN_1T' 'DEPT' 'Department'
-                                '' 'X'
-                          CHANGING lt_fields.
+  PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'DEPT' 'Department'
+                                '' 'X'.
 
-  PERFORM add_popup_field USING 'ZWM_BLOCK_RSN_1T' 'REASON_CODE' 'Reason code'
-                                '' 'X'
-                          CHANGING lt_fields.
-
-  PERFORM add_popup_field USING 'ZWM_BLOCK_RSN_1T' 'REASON_TEXT' 'Reason text'
-                                '' ''
-                          CHANGING lt_fields.
-
-  PERFORM show_popup USING 'Block stock' lt_fields
-                      CHANGING lv_ok.
+  lv_title = 'Block stock'.
+  PERFORM show_popup USING lv_title CHANGING lv_ok.
   IF lv_ok = abap_false.
     RETURN.
   ENDIF.
 
-  PERFORM get_popup_value USING lt_fields 'LAYER'
-                           CHANGING lv_chosen.
-  PERFORM get_popup_value USING lt_fields 'DEPT'
-                           CHANGING ls_request-dept.
-  PERFORM get_popup_value USING lt_fields 'REASON_CODE'
-                           CHANGING ls_request-reason_code.
-  PERFORM get_popup_value USING lt_fields 'REASON_TEXT'
-                           CHANGING ls_request-reason_text.
+  PERFORM get_popup_value USING 'LAYER' CHANGING lv_chosen.
+  PERFORM get_popup_value USING 'DEPT' CHANGING ls_request-dept.
+
+  " The reason code is never typed in: the user picks one of the reasons that
+  " table T157E holds for the movement type of this action.
+  lv_title = |Block reason ({ lv_bwart })|.
+  PERFORM select_reason USING lv_bwart lv_title
+                        CHANGING ls_request-reason_code
+                                 ls_request-reason_text.
+  IF ls_request-reason_code IS INITIAL.
+    RETURN.
+  ENDIF.
 
   IF lv_chosen IS NOT INITIAL AND lv_chosen < lv_layer.
     " The user pointed at a layer that is already open - change its reason.
     ls_result = go_block->modify_reason( is_stock   = is_stock
                                          iv_layer   = lv_chosen
-                                         is_request = ls_request ).
+                                         is_request = ls_request
+                                         iv_bwart   = lv_bwart ).
   ELSE.
     ls_result = go_block->block( is_stock   = is_stock
-                                 is_request = ls_request ).
+                                 is_request = ls_request
+                                 iv_bwart   = lv_bwart ).
   ENDIF.
 
   PERFORM report_result USING ls_result-success
@@ -337,52 +338,60 @@ ENDFORM.
 *----------------------------------------------------------------------*
 * Unblock - release one layer
 *----------------------------------------------------------------------*
-FORM execute_release USING is_stock TYPE zwm_quan_1s.
+FORM execute_release USING is_stock  TYPE zwm_quan_1s
+                          is_action TYPE zcl_wm_action_config=>ty_action.
   DATA: lt_layers  TYPE zcl_wm_stock_block=>tt_layer,
-        lt_fields  TYPE TABLE OF sval,
         ls_request TYPE zcl_wm_stock_block=>ty_release_request,
         ls_result  TYPE zcl_wm_stock_block=>ty_result,
-        lv_ok      TYPE abap_bool.
+        lv_bwart   TYPE bwart,
+        lv_ok      TYPE abap_bool,
+        lv_title   TYPE string,
+        lv_default TYPE zwm_layer.
+
+  lv_bwart = is_action-bwart.
+  IF lv_bwart IS INITIAL.
+    lv_bwart = zcl_wm_stock_block=>c_bwart_unblock.
+  ENDIF.
 
   lt_layers = go_block->get_open_layers( is_stock ).
 
   IF lt_layers IS INITIAL.
     go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-quant_not_blocked
-                       iv_v1     = is_stock-lqnum ).
+                       iv_v1     = CONV symsgv( is_stock-lqnum ) ).
     RETURN.
   ENDIF.
 
-  PERFORM show_layers USING lt_layers
-        |Open block layers of quant { is_stock-lqnum }|.
+  lv_title = |Open block layers of quant { is_stock-lqnum }|.
+  PERFORM show_layers USING lt_layers lv_title.
+
+  lv_default = lt_layers[ 1 ]-layer.
+
+  CLEAR gt_fields.
 
   PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'LAYER' 'Layer to release'
-                                lt_layers[ 1 ]-layer 'X'
-                          CHANGING lt_fields.
+                                lv_default 'X'.
 
-  PERFORM add_popup_field USING 'ZWM_BLOCK_RSN_1T' 'REASON_CODE'
-                                'Release reason code (must match the block reason)'
-                                '' 'X'
-                          CHANGING lt_fields.
-
-  PERFORM add_popup_field USING 'ZWM_BLOCK_RSN_1T' 'REASON_TEXT'
-                                'Release reason text' '' ''
-                          CHANGING lt_fields.
-
-  PERFORM show_popup USING 'Release blocked stock' lt_fields
-                      CHANGING lv_ok.
+  lv_title = 'Release blocked stock'.
+  PERFORM show_popup USING lv_title CHANGING lv_ok.
   IF lv_ok = abap_false.
     RETURN.
   ENDIF.
 
-  PERFORM get_popup_value USING lt_fields 'LAYER'
-                           CHANGING ls_request-layer.
-  PERFORM get_popup_value USING lt_fields 'REASON_CODE'
-                           CHANGING ls_request-reason_code.
-  PERFORM get_popup_value USING lt_fields 'REASON_TEXT'
-                           CHANGING ls_request-reason_text.
+  PERFORM get_popup_value USING 'LAYER' CHANGING ls_request-layer.
+
+  " The release reason has to repeat the block reason, so it is picked from
+  " the same T157E list and checked again inside the block logic.
+  lv_title = |Release reason ({ lv_bwart })|.
+  PERFORM select_reason USING lv_bwart lv_title
+                        CHANGING ls_request-reason_code
+                                 ls_request-reason_text.
+  IF ls_request-reason_code IS INITIAL.
+    RETURN.
+  ENDIF.
 
   ls_result = go_block->release( is_stock   = is_stock
-                                 is_request = ls_request ).
+                                 is_request = ls_request
+                                 iv_bwart   = lv_bwart ).
 
   PERFORM report_result USING ls_result-success
                               ls_result-msg_no
@@ -391,21 +400,90 @@ FORM execute_release USING is_stock TYPE zwm_quan_1s.
 ENDFORM.
 
 *----------------------------------------------------------------------*
+* Pick a reason code from table T157E
+*
+* The cockpit does not keep its own reason codes: T157E (the standard text
+* table of movement reasons) is the only source, so the list simply shows
+* what has been maintained for the movement type of the action. The block
+* logic validates the choice again before it writes anything.
+*----------------------------------------------------------------------*
+FORM select_reason USING    iv_bwart       TYPE bwart
+                            iv_title       TYPE string
+                   CHANGING cv_reason_code TYPE mb_grbew
+                            cv_reason_text TYPE grtxt.
+  DATA: lt_reasons TYPE zcl_wm_action_config=>tt_reason,
+        lt_display TYPE zcl_wm_action_config=>tt_reason,
+        lt_rows    TYPE salv_t_row,
+        lo_salv    TYPE REF TO cl_salv_table,
+        lo_error   TYPE REF TO cx_root,
+        lv_text    TYPE string,
+        lv_header  TYPE lvc_title.
+
+  lt_reasons = go_config->get_reasons( iv_bwart ).
+
+  IF lt_reasons IS INITIAL.
+    go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-reason_not_found
+                       iv_v1     = CONV symsgv( iv_bwart ) ).
+    RETURN.
+  ENDIF.
+
+  lt_display = lt_reasons.
+
+  TRY.
+      cl_salv_table=>factory( IMPORTING r_salv_table = lo_salv
+                              CHANGING  t_table      = lt_display ).
+
+      lo_salv->get_columns( )->set_optimize( abap_true ).
+      lo_salv->get_functions( )->set_all( abap_true ).
+      lo_salv->get_selections( )->set_selection_mode(
+        if_salv_c_selection_mode=>single ).
+      lv_header = iv_title.
+      lo_salv->get_display_settings( )->set_list_header( lv_header ).
+      lo_salv->set_screen_popup( start_column = 5
+                                 end_column   = 95
+                                 start_line   = 3
+                                 end_line     = 20 ).
+      lo_salv->display( ).
+
+      lt_rows = lo_salv->get_selections( )->get_selected_rows( ).
+
+    CATCH cx_salv_msg INTO lo_error.
+      lv_text = lo_error->get_text( ).
+      go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-internal_error
+                         iv_v1     = CONV symsgv( lv_text ) ).
+      RETURN.
+  ENDTRY.
+
+  IF lines( lt_rows ) <> 1.
+    " The list was closed without choosing a reason.
+    go_msg->add_info( zcl_wm_msg=>cs_msg-enter_reason ).
+    RETURN.
+  ENDIF.
+
+  READ TABLE lt_reasons INTO DATA(ls_reason) INDEX lt_rows[ 1 ].
+  IF sy-subrc = 0.
+    cv_reason_code = ls_reason-grund.
+    cv_reason_text = ls_reason-grtxt.
+  ENDIF.
+ENDFORM.
+
+*----------------------------------------------------------------------*
 * Block reasons of a quant
 *----------------------------------------------------------------------*
 FORM show_block_reasons USING is_stock TYPE zwm_quan_1s.
-  DATA lt_layers TYPE zcl_wm_stock_block=>tt_layer.
+  DATA: lt_layers TYPE zcl_wm_stock_block=>tt_layer,
+        lv_title  TYPE string.
 
   lt_layers = go_block->get_open_layers( is_stock ).
 
   IF lt_layers IS INITIAL.
     go_msg->add_info( iv_number = zcl_wm_msg=>cs_msg-quant_not_blocked
-                      iv_v1     = is_stock-lqnum ).
+                      iv_v1     = CONV symsgv( is_stock-lqnum ) ).
     RETURN.
   ENDIF.
 
-  PERFORM show_layers USING lt_layers
-        |Block layers of quant { is_stock-lqnum }|.
+  lv_title = |Block layers of quant { is_stock-lqnum }|.
+  PERFORM show_layers USING lt_layers lv_title.
 ENDFORM.
 
 *----------------------------------------------------------------------*
@@ -438,7 +516,7 @@ FORM show_layers USING it_layers TYPE zcl_wm_stock_block=>tt_layer
     CATCH cx_salv_msg INTO lo_error.
       lv_text = lo_error->get_text( ).
       go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-internal_error
-                         iv_v1     = lv_text ).
+                         iv_v1     = CONV symsgv( lv_text ) ).
   ENDTRY.
 ENDFORM.
 
@@ -448,13 +526,20 @@ ENDFORM.
 * POPUP_GET_VALUES is used for all data entry: the function module
 * carries its own screen, so the report needs no dynpro of its own and
 * stays fully abapGit-serialisable.
+*
+* The field table is a single global because a FORM interface must not
+* contain a table parameter: the compiler miscounts such a parameter as
+* three formal parameters ("Different number of parameters in FORM and
+* PERFORM"). It also has to be writable, since POPUP_GET_VALUES fills in
+* what the user typed.
 *----------------------------------------------------------------------*
-FORM add_popup_field USING    iv_tabname   TYPE sval-tabname
-                              iv_fieldname TYPE sval-fieldname
-                              iv_text      TYPE sval-fieldtext
-                              iv_value     TYPE sval-value
-                              iv_required  TYPE sval-field_obl
-                     CHANGING ct_fields    TYPE TABLE OF sval.
+DATA gt_fields TYPE TABLE OF sval.
+
+FORM add_popup_field USING iv_tabname   TYPE sval-tabname
+                           iv_fieldname TYPE sval-fieldname
+                           iv_text      TYPE sval-fieldtext
+                           iv_value     TYPE sval-value
+                           iv_required  TYPE sval-field_obl.
   DATA ls_field TYPE sval.
 
   ls_field-tabname   = iv_tabname.
@@ -463,17 +548,16 @@ FORM add_popup_field USING    iv_tabname   TYPE sval-tabname
   ls_field-value     = iv_value.
   ls_field-field_obl = iv_required.
 
-  APPEND ls_field TO ct_fields.
+  APPEND ls_field TO gt_fields.
 ENDFORM.
 
-FORM show_popup USING    iv_title  TYPE string
-                         ct_fields TYPE TABLE OF sval
-                CHANGING cv_ok     TYPE abap_bool.
+FORM show_popup USING    iv_title TYPE string
+                CHANGING cv_ok    TYPE abap_bool.
   CALL FUNCTION 'POPUP_GET_VALUES'
     EXPORTING
       popup_title     = iv_title
     TABLES
-      fields          = ct_fields
+      fields          = gt_fields
     EXCEPTIONS
       error_in_fields = 1
       OTHERS          = 2.
@@ -481,12 +565,11 @@ FORM show_popup USING    iv_title  TYPE string
   cv_ok = xsdbool( sy-subrc = 0 ).
 ENDFORM.
 
-FORM get_popup_value USING    it_fields    TYPE TABLE OF sval
-                              iv_fieldname TYPE sval-fieldname
+FORM get_popup_value USING    iv_fieldname TYPE sval-fieldname
                      CHANGING cv_value     TYPE any.
   DATA ls_field TYPE sval.
 
-  READ TABLE it_fields INTO ls_field WITH KEY fieldname = iv_fieldname.
+  READ TABLE gt_fields INTO ls_field WITH KEY fieldname = iv_fieldname.
   IF sy-subrc = 0.
     cv_value = ls_field-value.
   ENDIF.

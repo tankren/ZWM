@@ -35,23 +35,29 @@ CLASS zcl_wm_stock_block DEFINITION
     CONSTANTS c_status_released TYPE zwm_blkstat VALUE 'R'.
     "! The specification allows at most three layers per quant.
     CONSTANTS c_max_layers TYPE i VALUE 3.
+    "! Movement type of the first block: unrestricted -> blocked.
+    CONSTANTS c_bwart_block TYPE bwart VALUE '344'.
+    "! Movement type of the last release: blocked -> unrestricted.
+    CONSTANTS c_bwart_unblock TYPE bwart VALUE '343'.
 
     "! A block layer, as stored in ZWM_BLOCKLOG_1T.
     TYPES ty_layer TYPE zwm_blocklog_1t.
     TYPES tt_layer TYPE STANDARD TABLE OF ty_layer WITH EMPTY KEY.
 
-    "! What the user entered to block a quant.
+    "! What the user entered to block a quant. The reason is a movement
+    "! reason (T157E-GRUND); the text is the snapshot of T157E-GRTXT, kept so
+    "! that the log stays readable when customizing is changed later.
     TYPES: BEGIN OF ty_block_request,
              dept        TYPE zwm_dept,
-             reason_code TYPE zwm_blcreason,
-             reason_text TYPE text60,
+             reason_code TYPE mb_grbew,
+             reason_text TYPE grtxt,
            END OF ty_block_request.
 
     "! What the user entered to release one layer.
     TYPES: BEGIN OF ty_release_request,
              layer       TYPE zwm_layer,
-             reason_code TYPE zwm_blcreason,
-             reason_text TYPE text60,
+             reason_code TYPE mb_grbew,
+             reason_text TYPE grtxt,
            END OF ty_release_request.
 
     "! Outcome of an operation. SUCCESS decides whether MSG_NO is a success or
@@ -74,7 +80,7 @@ CLASS zcl_wm_stock_block DEFINITION
     METHODS block
       IMPORTING is_stock          TYPE zwm_quan_1s
                 is_request        TYPE ty_block_request
-                iv_bwart          TYPE bwart DEFAULT '344'
+                iv_bwart          TYPE bwart DEFAULT c_bwart_block
       RETURNING VALUE(rs_result)  TYPE ty_result.
 
     "! Releases one open layer. The release reason must repeat the block
@@ -82,7 +88,7 @@ CLASS zcl_wm_stock_block DEFINITION
     METHODS release
       IMPORTING is_stock          TYPE zwm_quan_1s
                 is_request        TYPE ty_release_request
-                iv_bwart          TYPE bwart DEFAULT '343'
+                iv_bwart          TYPE bwart DEFAULT c_bwart_unblock
       RETURNING VALUE(rs_result)  TYPE ty_result.
 
     "! Replaces the reason of an existing open layer. Bookkeeping only, the
@@ -91,6 +97,7 @@ CLASS zcl_wm_stock_block DEFINITION
       IMPORTING is_stock          TYPE zwm_quan_1s
                 iv_layer          TYPE zwm_layer
                 is_request        TYPE ty_block_request
+                iv_bwart          TYPE bwart DEFAULT c_bwart_block
       RETURNING VALUE(rs_result)  TYPE ty_result.
 
     "! The open layers of a quant, for display.
@@ -129,16 +136,16 @@ CLASS zcl_wm_stock_block DEFINITION
       IMPORTING is_stock      TYPE zwm_quan_1s
                 iv_layer      TYPE zwm_layer
                 iv_dept       TYPE zwm_dept
-                iv_reason_code TYPE zwm_blcreason
-                iv_reason_text TYPE text60
+                iv_reason_code TYPE mb_grbew
+                iv_reason_text TYPE grtxt
                 iv_tanum      TYPE tanum
       RETURNING VALUE(rv_subrc) TYPE sysubrc.
 
     METHODS set_layer_released
       IMPORTING is_stock      TYPE zwm_quan_1s
                 iv_layer      TYPE zwm_layer
-                iv_reason_code TYPE zwm_blcreason
-                iv_reason_text TYPE text60
+                iv_reason_code TYPE mb_grbew
+                iv_reason_text TYPE grtxt
                 iv_tanum      TYPE tanum
       RETURNING VALUE(rv_subrc) TYPE sysubrc.
 ENDCLASS.
@@ -198,12 +205,9 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
 
     DATA(lv_layer) = next_free_layer( lv_open ).
 
-    " Validate the reason against customizing before anything is written.
-    DATA(ls_reason) = mo_config->get_reason(
-      iv_dept        = is_request-dept
-      iv_layer       = lv_layer
-      iv_reason_code = is_request-reason_code
-      iv_lgnum       = is_stock-lgnum ).
+    " Validate the reason against T157E before anything is written.
+    DATA(ls_reason) = mo_config->get_reason( iv_bwart       = iv_bwart
+                                             iv_reason_code = is_request-reason_code ).
 
     IF ls_reason IS INITIAL.
       rs_result-msg_no = zcl_wm_msg=>cs_msg-reason_not_found.
@@ -263,6 +267,17 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
       RETURN.
     ENDIF.
 
+    " The reason has to exist for this movement type, and releasing a layer
+    " has to repeat the reason it was blocked with.
+    DATA(ls_reason) = mo_config->get_reason( iv_bwart       = iv_bwart
+                                             iv_reason_code = is_request-reason_code ).
+
+    IF ls_reason IS INITIAL.
+      rs_result-msg_no = zcl_wm_msg=>cs_msg-reason_not_found.
+      rs_result-msg_v1 = is_request-reason_code.
+      RETURN.
+    ENDIF.
+
     IF is_request-reason_code <> ls_layer-reason_code.
       rs_result-msg_no = zcl_wm_msg=>cs_msg-release_reason_mismat.
       RETURN.
@@ -317,7 +332,16 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
 
 
   METHOD modify_reason.
-    DATA lv_code TYPE zwm_blcreason.
+    DATA(ls_reason) = mo_config->get_reason( iv_bwart       = iv_bwart
+                                             iv_reason_code = is_request-reason_code ).
+
+    IF ls_reason IS INITIAL.
+      rs_result-msg_no = zcl_wm_msg=>cs_msg-reason_not_found.
+      rs_result-msg_v1 = is_request-reason_code.
+      RETURN.
+    ENDIF.
+
+    DATA lv_code TYPE mb_grbew.
     DATA lv_text TYPE text60.
     DATA lv_user TYPE xubname.
     DATA lv_date TYPE erdat.

@@ -89,7 +89,10 @@ CLASS zcl_wm_stock_alv IMPLEMENTATION.
           CHANGING  t_table      = lt_display ).
 
         IF iv_title IS NOT INITIAL.
-          mo_salv->get_display_settings( )->set_list_header( iv_title ).
+          " set_list_header expects a fixed length character field, so the
+          " string is converted explicitly.
+          DATA(lv_header) = CONV lvc_title( iv_title ).
+          mo_salv->get_display_settings( )->set_list_header( lv_header ).
         ENDIF.
 
         mo_salv->get_selections( )->set_selection_mode(

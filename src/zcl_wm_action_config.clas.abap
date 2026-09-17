@@ -17,8 +17,10 @@ CLASS zcl_wm_action_config DEFINITION
     TYPES ty_action TYPE zwm_stk_act_1t.
     TYPES tt_action TYPE STANDARD TABLE OF ty_action WITH EMPTY KEY.
 
-    "! One configured block reason code (row of ZWM_BLOCK_RSN_1T).
-    TYPES ty_reason TYPE zwm_block_rsn_1t.
+    "! One movement reason of the standard table T157E. The cockpit keeps no
+    "! reason codes of its own: whatever has been maintained for the movement
+    "! type is what the user can choose from.
+    TYPES ty_reason TYPE t157e.
     TYPES tt_reason TYPE STANDARD TABLE OF ty_reason WITH EMPTY KEY.
 
     "! All active actions, ordered by SORT_NO.
@@ -34,19 +36,18 @@ CLASS zcl_wm_action_config DEFINITION
       IMPORTING iv_action_id      TYPE zwm_action_id
       RETURNING VALUE(rs_action)  TYPE ty_action.
 
-    "! Active reason codes of one department and one block layer.
+    "! The reasons T157E holds for one movement type, in the logon language.
+    "! If the texts were only maintained in another language, whatever exists
+    "! is returned rather than an empty list.
     METHODS get_reasons
-      IMPORTING iv_dept           TYPE zwm_dept
-                iv_layer          TYPE zwm_layer
-                iv_lgnum          TYPE lgnum DEFAULT space
+      IMPORTING iv_bwart          TYPE bwart
       RETURNING VALUE(rt_reasons) TYPE tt_reason.
 
-    "! A single reason code, used to validate what the user entered.
+    "! A single reason code, used to validate what the user selected. The
+    "! lookup is language independent: existence is what is being checked.
     METHODS get_reason
-      IMPORTING iv_dept         TYPE zwm_dept
-                iv_layer        TYPE zwm_layer
-                iv_reason_code  TYPE zwm_blcreason
-                iv_lgnum        TYPE lgnum DEFAULT space
+      IMPORTING iv_bwart         TYPE bwart
+                iv_reason_code   TYPE mb_grbew
       RETURNING VALUE(rs_reason) TYPE ty_reason.
 
     "! Authorization check driven by the action configuration.
@@ -80,24 +81,31 @@ CLASS zcl_wm_action_config IMPLEMENTATION.
 
 
   METHOD get_reasons.
-    SELECT * FROM zwm_block_rsn_1t
-      WHERE dept  = @iv_dept
-        AND layer = @iv_layer
-        AND active = @abap_true
-      ORDER BY reason_code
+    SELECT * FROM t157e
+      WHERE spras = @sy-langu
+        AND bwart = @iv_bwart
+      ORDER BY grund
       INTO TABLE @rt_reasons.
 
-    IF iv_lgnum IS NOT INITIAL.
-      DELETE rt_reasons WHERE lgnum IS NOT INITIAL AND lgnum <> iv_lgnum.
+    IF rt_reasons IS NOT INITIAL.
+      RETURN.
     ENDIF.
+
+    " The reasons may only have been maintained in another language. Showing
+    " them is better than showing an empty list.
+    SELECT * FROM t157e
+      WHERE bwart = @iv_bwart
+      ORDER BY grund, spras
+      INTO TABLE @rt_reasons.
+
+    DELETE ADJACENT DUPLICATES FROM rt_reasons COMPARING grund.
   ENDMETHOD.
 
 
   METHOD get_reason.
-    SELECT SINGLE * FROM zwm_block_rsn_1t
-      WHERE dept        = @iv_dept
-        AND layer       = @iv_layer
-        AND reason_code = @iv_reason_code
+    SELECT SINGLE * FROM t157e
+      WHERE bwart = @iv_bwart
+        AND grund = @iv_reason_code
       INTO @rs_reason.
   ENDMETHOD.
 

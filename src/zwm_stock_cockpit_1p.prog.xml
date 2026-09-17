@@ -9,6 +9,18 @@
     <FIXPT>X</FIXPT>
     <UCCHECK>X</UCCHECK>
    </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>001</ID>
+     <ENTRY>Stock selection</ENTRY>
+     <LENGTH>15</LENGTH>
+    </item>
+    <item>
+     <ID>002</ID>
+     <ENTRY>Additional filter</ENTRY>
+     <LENGTH>17</LENGTH>
+    </item>
+   </TPOOL>
   </asx:values>
  </asx:abap>
 </abapGit>
