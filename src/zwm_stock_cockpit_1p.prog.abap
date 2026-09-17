@@ -582,11 +582,26 @@ FORM value_help_lgnum.
   ENDIF.
 
   " The columns of the value list: the warehouse number and its name.
+  " F4IF_INT_TABLE_VALUE_REQUEST checks every field_tab entry for a usable
+  " ABAP type and raises parameter_error when it cannot determine one, so the
+  " data element and the ABAP type are supplied explicitly.
+  CLEAR ls_fieldtab.
   ls_fieldtab-fieldname = 'LGNUM'.
+  ls_fieldtab-tabname   = 'T300T'.
+  ls_fieldtab-rollname  = 'LGNUM'.
+  ls_fieldtab-inttype   = 'C'.
+  ls_fieldtab-intlen    = 3.
+  ls_fieldtab-outputlen = 3.
   ls_fieldtab-fieldtext = 'Warehouse'.
   APPEND ls_fieldtab TO lt_fieldtab.
 
+  CLEAR ls_fieldtab.
   ls_fieldtab-fieldname = 'LNUMT'.
+  ls_fieldtab-tabname   = 'T300T'.
+  ls_fieldtab-rollname  = 'LVS_LNUMT'.
+  ls_fieldtab-inttype   = 'C'.
+  ls_fieldtab-intlen    = 25.
+  ls_fieldtab-outputlen = 25.
   ls_fieldtab-fieldtext = 'Name'.
   APPEND ls_fieldtab TO lt_fieldtab.
 
@@ -605,6 +620,14 @@ FORM value_help_lgnum.
       parameter_error = 1
       no_values_found = 2
       OTHERS          = 3.
+
+  IF sy-subrc <> 0.
+    " The value help must not fail silently: without a handler the function
+    " module would simply return and the user would see no list at all.
+    go_msg->add_error( iv_number = zcl_wm_msg=>cs_msg-internal_error
+                       iv_v1     = CONV symsgv( sy-subrc ) ).
+    PERFORM display_messages.
+  ENDIF.
 ENDFORM.
 
 *----------------------------------------------------------------------*
