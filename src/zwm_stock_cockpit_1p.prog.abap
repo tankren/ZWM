@@ -541,6 +541,44 @@ FORM show_layers USING it_layers TYPE zcl_wm_stock_block=>tt_layer
 ENDFORM.
 
 *----------------------------------------------------------------------*
+* Warehouse number value help
+*
+* The warehouse number has no value help of its own in the Dictionary, so
+* the WM warehouse numbers maintained in T340D are offered explicitly.
+*----------------------------------------------------------------------*
+FORM value_help_lgnum.
+  TYPES: BEGIN OF ty_lgnum,
+           lgnum TYPE lgnum,
+         END OF ty_lgnum,
+         tt_lgnum TYPE STANDARD TABLE OF ty_lgnum WITH EMPTY KEY.
+
+  DATA: lt_values TYPE tt_lgnum,
+        lt_return TYPE STANDARD TABLE OF ddshretval WITH EMPTY KEY.
+
+  SELECT DISTINCT lgnum FROM t340d
+    INTO TABLE @lt_values.
+
+  IF lt_values IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+      retfield        = 'LGNUM'
+      dynpprog        = sy-repid
+      dynpnr          = sy-dynnr
+      dynprofield     = 'P_LGNUM'
+      value_org       = 'S'
+    TABLES
+      value_tab       = lt_values
+      return_tab      = lt_return
+    EXCEPTIONS
+      parameter_error = 1
+      no_values_found = 2
+      OTHERS          = 3.
+ENDFORM.
+
+*----------------------------------------------------------------------*
 * Popup helpers
 *
 * POPUP_GET_VALUES is used for all data entry: the function module

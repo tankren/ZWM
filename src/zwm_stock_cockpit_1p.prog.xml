@@ -11,13 +11,110 @@
    </PROGDIR>
    <TPOOL>
     <item>
-     <ID>001</ID>
+     <ID>I</ID>
+     <KEY>001</KEY>
      <ENTRY>Stock selection</ENTRY>
      <LENGTH>15</LENGTH>
     </item>
     <item>
-     <ID>002</ID>
+     <ID>I</ID>
+     <KEY>002</KEY>
      <ENTRY>Additional filter</ENTRY>
+     <LENGTH>17</LENGTH>
+    </item>
+    <item>
+     <ID>R</ID>
+     <ENTRY>WM Stock Cockpit</ENTRY>
+     <LENGTH>16</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_LGNUM</KEY>
+     <ENTRY>Warehouse</ENTRY>
+     <LENGTH>9</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_MATNR</KEY>
+     <ENTRY>Material</ENTRY>
+     <LENGTH>8</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_WERKS</KEY>
+     <ENTRY>Plant</ENTRY>
+     <LENGTH>5</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_LGORT</KEY>
+     <ENTRY>Storage loc.</ENTRY>
+     <LENGTH>12</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_BESTQ</KEY>
+     <ENTRY>Stock cat.</ENTRY>
+     <LENGTH>10</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_SOBKZ</KEY>
+     <ENTRY>Special stock</ENTRY>
+     <LENGTH>13</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_SONUM</KEY>
+     <ENTRY>Special stock no.</ENTRY>
+     <LENGTH>17</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_CHARG</KEY>
+     <ENTRY>Batch</ENTRY>
+     <LENGTH>5</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_LGTYP</KEY>
+     <ENTRY>Storage type</ENTRY>
+     <LENGTH>12</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_LGPLA</KEY>
+     <ENTRY>Storage bin</ENTRY>
+     <LENGTH>11</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_WENUM</KEY>
+     <ENTRY>GR number</ENTRY>
+     <LENGTH>9</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_WDATU</KEY>
+     <ENTRY>GR date</ENTRY>
+     <LENGTH>7</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_QPLOS</KEY>
+     <ENTRY>Inspection lot</ENTRY>
+     <LENGTH>14</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_LENUM</KEY>
+     <ENTRY>Storage unit</ENTRY>
+     <LENGTH>12</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>S_HERKL</KEY>
+     <ENTRY>Country of origin</ENTRY>
      <LENGTH>17</LENGTH>
     </item>
    </TPOOL>
