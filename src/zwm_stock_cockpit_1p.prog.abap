@@ -559,18 +559,33 @@ ENDFORM.
 FORM value_help_lgnum.
   TYPES: BEGIN OF ty_lgnum,
            lgnum TYPE lgnum,
+           lnumt TYPE lvs_lnumt,
          END OF ty_lgnum,
          tt_lgnum TYPE STANDARD TABLE OF ty_lgnum WITH EMPTY KEY.
 
-  DATA: lt_values TYPE tt_lgnum,
-        lt_return TYPE STANDARD TABLE OF ddshretval WITH EMPTY KEY.
+  DATA: lt_values   TYPE tt_lgnum,
+        lt_return   TYPE STANDARD TABLE OF ddshretval WITH EMPTY KEY,
+        lt_fieldtab TYPE STANDARD TABLE OF dfies WITH EMPTY KEY,
+        ls_fieldtab TYPE dfies.
 
-  SELECT DISTINCT lgnum FROM t340d
-    INTO TABLE @lt_values.
+  SELECT t340d~lgnum, t300t~lnumt
+    FROM t340d
+    INNER JOIN t300t ON t300t~lgnum = t340d~lgnum
+    INTO CORRESPONDING FIELDS OF TABLE @lt_values
+    WHERE t300t~spras = @sy-langu.
 
   IF lt_values IS INITIAL.
     RETURN.
   ENDIF.
+
+  " The columns of the value list: the warehouse number and its name.
+  ls_fieldtab-fieldname = 'LGNUM'.
+  ls_fieldtab-fieldtext = 'Warehouse'.
+  APPEND ls_fieldtab TO lt_fieldtab.
+
+  ls_fieldtab-fieldname = 'LNUMT'.
+  ls_fieldtab-fieldtext = 'Name'.
+  APPEND ls_fieldtab TO lt_fieldtab.
 
   CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
     EXPORTING
@@ -578,9 +593,10 @@ FORM value_help_lgnum.
       dynpprog        = sy-repid
       dynpnr          = sy-dynnr
       dynprofield     = 'P_LGNUM'
-      value_org       = 'S'
+      value_org       = 'C'
     TABLES
       value_tab       = lt_values
+      field_tab       = lt_fieldtab
       return_tab      = lt_return
     EXCEPTIONS
       parameter_error = 1

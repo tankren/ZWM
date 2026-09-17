@@ -221,7 +221,7 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
       DATA lv_subrc TYPE sysubrc.
       post_posting_change(
         EXPORTING is_stock = is_stock
-                  iv_bwlvs = iv_bwart
+                  iv_bwlvs = CONV bwlvs( iv_bwart )
                   iv_bestq = space
         IMPORTING ev_tanum = lv_tanum
                   ev_subrc = lv_subrc ).
@@ -291,7 +291,7 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
       DATA lv_subrc TYPE sysubrc.
       post_posting_change(
         EXPORTING is_stock = is_stock
-                  iv_bwlvs = iv_bwart
+                  iv_bwlvs = CONV bwlvs( iv_bwart )
                   iv_bestq = c_bestq_blocked
         IMPORTING ev_tanum = lv_tanum
                   ev_subrc = lv_subrc ).
