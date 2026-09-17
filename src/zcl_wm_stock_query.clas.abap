@@ -139,9 +139,10 @@ CLASS zcl_wm_stock_query IMPLEMENTATION.
 
   METHOD enrich_material.
     DATA lt_matnr TYPE STANDARD TABLE OF matnr WITH EMPTY KEY.
-    DATA lt_makt TYPE STANDARD TABLE OF makt WITH EMPTY KEY.
-    DATA lt_mara TYPE STANDARD TABLE OF mara WITH EMPTY KEY.
-    DATA lt_mbew TYPE STANDARD TABLE OF mbew WITH EMPTY KEY.
+    " The result tables are typed inline at the SELECT statements below. Their
+    " select lists are narrower than the database tables, so a target typed with
+    " the whole database table would be filled positionally and the compiler
+    " would reject the mismatching components.
 
     lt_matnr = VALUE #( FOR ls_stock IN ct_stock ( ls_stock-matnr ) ).
     SORT lt_matnr.
@@ -155,19 +156,19 @@ CLASS zcl_wm_stock_query IMPLEMENTATION.
       FOR ALL ENTRIES IN @lt_matnr
       WHERE matnr = @lt_matnr-table_line
         AND spras = @sy-langu
-      INTO TABLE @lt_makt.
+      INTO TABLE @DATA(lt_makt).
 
     SELECT matnr, mtart, matkl, herkl FROM mara
       FOR ALL ENTRIES IN @lt_matnr
       WHERE matnr = @lt_matnr-table_line
-      INTO TABLE @lt_mara.
+      INTO TABLE @DATA(lt_mara).
 
     " MBEW has no currency; the currency belongs to the company code of the
     " valuation area and is resolved by get_currency( ).
     SELECT matnr, bwkey, stprs, peinh FROM mbew
       FOR ALL ENTRIES IN @lt_matnr
       WHERE matnr = @lt_matnr-table_line
-      INTO TABLE @lt_mbew.
+      INTO TABLE @DATA(lt_mbew).
 
     LOOP AT ct_stock ASSIGNING FIELD-SYMBOL(<ls_stock>).
       READ TABLE lt_makt INTO DATA(ls_makt)
