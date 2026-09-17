@@ -50,6 +50,12 @@ SELECTION-SCREEN BEGIN OF BLOCK blk_add WITH FRAME TITLE text-002.
 SELECTION-SCREEN END OF BLOCK blk_add.
 
 *----------------------------------------------------------------------*
+* Selection screen events
+*----------------------------------------------------------------------*
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_lgnum.
+  PERFORM value_help_lgnum.
+
+*----------------------------------------------------------------------*
 * Globals
 *----------------------------------------------------------------------*
 CONSTANTS c_msgid TYPE symsgid VALUE 'ZWM_MSG'.
