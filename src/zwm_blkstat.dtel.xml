@@ -5,13 +5,17 @@
    <DD04V>
     <ROLLNAME>ZWM_BLKSTAT</ROLLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ZWM_BLKSTAT</DOMNAME>
+    <HEADLEN>12</HEADLEN>
+    <SCRLEN1>06</SCRLEN1>
+    <SCRLEN2>12</SCRLEN2>
+    <SCRLEN3>18</SCRLEN3>
     <DDTEXT>WM block layer status</DDTEXT>
     <REPTEXT>Layer status</REPTEXT>
     <SCRTEXT_S>Status</SCRTEXT_S>
     <SCRTEXT_M>Layer status</SCRTEXT_M>
     <SCRTEXT_L>Block layer status</SCRTEXT_L>
     <DTELMASTER>E</DTELMASTER>
-    <DOMNAME>ZWM_BLKSTAT</DOMNAME>
    </DD04V>
   </asx:values>
  </asx:abap>

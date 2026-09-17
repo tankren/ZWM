@@ -5,13 +5,17 @@
    <DD04V>
     <ROLLNAME>ZWM_ACTTYPE</ROLLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ZWM_ACTTYPE</DOMNAME>
+    <HEADLEN>11</HEADLEN>
+    <SCRLEN1>09</SCRLEN1>
+    <SCRLEN2>11</SCRLEN2>
+    <SCRLEN3>19</SCRLEN3>
     <DDTEXT>Cockpit action type</DDTEXT>
     <REPTEXT>Action type</REPTEXT>
     <SCRTEXT_S>Act. type</SCRTEXT_S>
     <SCRTEXT_M>Action type</SCRTEXT_M>
     <SCRTEXT_L>Cockpit action type</SCRTEXT_L>
     <DTELMASTER>E</DTELMASTER>
-    <DOMNAME>ZWM_ACTTYPE</DOMNAME>
    </DD04V>
   </asx:values>
  </asx:abap>
