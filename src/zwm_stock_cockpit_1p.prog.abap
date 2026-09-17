@@ -50,12 +50,6 @@ SELECTION-SCREEN BEGIN OF BLOCK blk_add WITH FRAME TITLE text-002.
 SELECTION-SCREEN END OF BLOCK blk_add.
 
 *----------------------------------------------------------------------*
-* Selection screen events
-*----------------------------------------------------------------------*
-AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_lgnum.
-  PERFORM value_help_lgnum.
-
-*----------------------------------------------------------------------*
 * Globals
 *----------------------------------------------------------------------*
 CONSTANTS c_msgid TYPE symsgid VALUE 'ZWM_MSG'.
@@ -76,6 +70,16 @@ DATA: go_msg    TYPE REF TO zcl_wm_msg,
 * that use it, because a global declaration is only visible from its position
 * in the source onwards.
 DATA gt_fields TYPE TABLE OF sval.
+
+*----------------------------------------------------------------------*
+* Selection screen events
+*
+* Event blocks must follow the global declarations: a processing block
+* like this one swallows everything up to the next event keyword, and
+* declarations inside it would be local to the block.
+*----------------------------------------------------------------------*
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_lgnum.
+  PERFORM value_help_lgnum.
 
 *----------------------------------------------------------------------*
 START-OF-SELECTION.
