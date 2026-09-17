@@ -1,5 +1,5 @@
 ﻿*&---------------------------------------------------------------------*
-*& Report ZWM_STOCK_COCKPIT
+*& Report ZWM_STOCK_COCKPIT_1P
 *&---------------------------------------------------------------------*
 *& Warehouse stock cockpit (classic LE-WM).
 *&
@@ -15,8 +15,11 @@
 *& L_TO_CREATE_SINGLE with movement type 344 / 343.
 *&
 *& Design notes: see docs/design.md in the abapGit repository.
+*&
+*& Transaction ZWM_STOCK_COCKPIT starts this report. The program itself
+*& carries the _1P suffix so that the transaction can own the plain name.
 *&---------------------------------------------------------------------*
-REPORT zwm_stock_cockpit.
+REPORT zwm_stock_cockpit_1p.
 
 *----------------------------------------------------------------------*
 * Selection screen

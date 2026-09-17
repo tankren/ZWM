@@ -4,7 +4,9 @@ Warehouse stock cockpit for classic LE-WM on S/4HANA: query/display stock (LS24-
 plus configurable action buttons (Transfer / Scrap / Block / Unblock / Reasons) that all
 execute through standard SAP function modules.
 
-- **Program**: `ZWM_STOCK_COCKPIT` — classic report (selection screen + `cl_salv_table`)
+- **Program**: `ZWM_STOCK_COCKPIT_1P` — classic report (selection screen + `cl_salv_table`)
+- **Transaction**: `ZWM_STOCK_COCKPIT` — report transaction (SE93 type *Report Transaction*),
+  screen `1000`, starting `ZWM_STOCK_COCKPIT_1P`
 - **Package**: `ZWM` — "WM Custom Object Package"
 - **Delivery**: abapGit (`~/opencode/ZWM/abapgit`)
 - **Message class**: `ZWM_MSG`
@@ -243,7 +245,7 @@ Two things worth recording:
 ## 7. Architecture
 
 ```
-ZWM_STOCK_COCKPIT  (report)
+ZWM_STOCK_COCKPIT_1P  (report, started by transaction ZWM_STOCK_COCKPIT)
 ├── selection screen 1000          image.png
 ├── ALV result list (cl_salv_table) image2.png   ← ZCL_WM_STOCK_ALV
 │      dynamic toolbar from ZWM_STK_ACT_1T

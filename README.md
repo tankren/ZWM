@@ -33,7 +33,8 @@ sits at the root and all SAP objects live under `src/`.
 
 | Area | Objects |
 |---|---|
-| Report | `ZWM_STOCK_COCKPIT` (classic report — no dynpros) |
+| Report | `ZWM_STOCK_COCKPIT_1P` (classic report — no dynpros) |
+| Transaction | `ZWM_STOCK_COCKPIT` — starts `ZWM_STOCK_COCKPIT_1P` |
 | Classes | `ZCL_WM_MSG`, `ZCL_WM_ACTION_CONFIG`, `ZCL_WM_STOCK_QUERY`, `ZCL_WM_STOCK_ACTION`, `ZCL_WM_STOCK_BLOCK`, `ZCL_WM_STOCK_ALV` |
 | Tables | `ZWM_STK_ACT_1T` (action buttons), `ZWM_BLOCK_RSN_1T` (block reason codes, SM30), `ZWM_BLOCKLOG_1T` (block layers) |
 | Structure / table type | `ZWM_QUAN_1S`, `ZWM_QUAN_1TT` |
@@ -51,7 +52,8 @@ sits at the root and all SAP objects live under `src/`.
    abapGit does not transport the generator.
 3. Load the seed data for `ZWM_STK_ACT_1T` (the buttons) and
    `ZWM_BLOCK_RSN_1T` (the reason codes).
-4. Run `ZWM_STOCK_COCKPIT` via SA38.
+4. Run transaction `ZWM_STOCK_COCKPIT` (or `SA38` with program
+   `ZWM_STOCK_COCKPIT_1P`).
 
 Full details, including the sample configuration rows, are in
 [`docs/install.md`](docs/install.md).

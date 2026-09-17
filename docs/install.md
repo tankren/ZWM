@@ -127,8 +127,9 @@ Maintained with `SM30` (after step 3.1). Key is `DEPT` + `LAYER` + `REASON_CODE`
 
 ## 4. Running the cockpit
 
-1. Transaction `SA38` (or `SE38`) → program **`ZWM_STOCK_COCKPIT`** → Execute.
-   Create a transaction code for it if you want one.
+1. Transaction **`ZWM_STOCK_COCKPIT`** — or `SA38`/`SE38` with program
+   **`ZWM_STOCK_COCKPIT_1P`**. The transaction is part of the repository; the program
+   carries the `_1P` suffix so that the transaction can own the plain name.
 2. **Selection screen**: warehouse number is mandatory; material, plant, storage location,
    stock category, special stock indicator/number and batch are optional ranges.
    The **Additional filter** block narrows by storage type, storage bin, GR number,
