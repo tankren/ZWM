@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZCL_WM_STOCK_ACTION</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>WM stock cockpit - transfer and scrap movements</DESCRIPT>
+    <DESCRIPT>WM stock cockpit - stock movements</DESCRIPT>
     <STATE>1</STATE>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>

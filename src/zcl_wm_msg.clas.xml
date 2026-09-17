@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZCL_WM_MSG</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>WM Stock Cockpit - message collection</DESCRIPT>
+    <DESCRIPT>Message collection for the WM Stock Cockpit</DESCRIPT>
     <STATE>1</STATE>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>

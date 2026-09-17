@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZCL_WM_STOCK_BLOCK</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>WM stock cockpit - multi-layer block and unblock</DESCRIPT>
+    <DESCRIPT>WM stock cockpit - block and unblock</DESCRIPT>
     <STATE>1</STATE>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>

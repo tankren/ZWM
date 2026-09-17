@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>ZCL_WM_STOCK_ALV</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>WM stock cockpit - result list and dynamic toolbar</DESCRIPT>
+    <DESCRIPT>WM stock cockpit - result list</DESCRIPT>
     <STATE>1</STATE>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
