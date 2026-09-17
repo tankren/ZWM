@@ -582,28 +582,40 @@ FORM value_help_lgnum.
   ENDIF.
 
   " The columns of the value list: the warehouse number and its name.
-  " F4IF_INT_TABLE_VALUE_REQUEST checks every field_tab entry for a usable
-  " ABAP type and raises parameter_error when it cannot determine one, so the
-  " data element and the ABAP type are supplied explicitly.
+  " The field descriptions come from the Dictionary. F4IF_INT_TABLE_VALUE_REQUEST
+  " validates every field_tab entry (it raises parameter_error when it cannot
+  " derive an ABAP type) and lays the columns out from the lengths in the entry,
+  " so a hand-filled entry made the warehouse number column one character too
+  " narrow. DDIF_FIELDINFO_GET returns the complete Dictionary description.
   CLEAR ls_fieldtab.
-  ls_fieldtab-fieldname = 'LGNUM'.
-  ls_fieldtab-tabname   = 'T300T'.
-  ls_fieldtab-rollname  = 'LGNUM'.
-  ls_fieldtab-inttype   = 'C'.
-  ls_fieldtab-intlen    = 3.
-  ls_fieldtab-outputlen = 3.
-  ls_fieldtab-fieldtext = 'Warehouse'.
-  APPEND ls_fieldtab TO lt_fieldtab.
+  CALL FUNCTION 'DDIF_FIELDINFO_GET'
+    EXPORTING
+      tabname   = 'T300T'
+      fieldname = 'LGNUM'
+    IMPORTING
+      dfies_wa  = ls_fieldtab
+    EXCEPTIONS
+      OTHERS    = 1.
+
+  IF sy-subrc = 0.
+    ls_fieldtab-fieldtext = 'Warehouse'.
+    APPEND ls_fieldtab TO lt_fieldtab.
+  ENDIF.
 
   CLEAR ls_fieldtab.
-  ls_fieldtab-fieldname = 'LNUMT'.
-  ls_fieldtab-tabname   = 'T300T'.
-  ls_fieldtab-rollname  = 'LVS_LNUMT'.
-  ls_fieldtab-inttype   = 'C'.
-  ls_fieldtab-intlen    = 25.
-  ls_fieldtab-outputlen = 25.
-  ls_fieldtab-fieldtext = 'Name'.
-  APPEND ls_fieldtab TO lt_fieldtab.
+  CALL FUNCTION 'DDIF_FIELDINFO_GET'
+    EXPORTING
+      tabname   = 'T300T'
+      fieldname = 'LNUMT'
+    IMPORTING
+      dfies_wa  = ls_fieldtab
+    EXCEPTIONS
+      OTHERS    = 1.
+
+  IF sy-subrc = 0.
+    ls_fieldtab-fieldtext = 'Name'.
+    APPEND ls_fieldtab TO lt_fieldtab.
+  ENDIF.
 
   CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
     EXPORTING

@@ -148,17 +148,20 @@ CLASS zcl_wm_stock_alv IMPLEMENTATION.
 
       " The action id doubles as the function code, which is how display( )
       " maps the pressed button back to its configuration.
+      " The parameters of SET_FUNCTION are fixed length character fields, so the
+      " configured values are passed as they are. A CONV string( ) is rejected
+      " by the compiler because a string cannot be passed to a character field.
       IF ls_action-icon_name IS INITIAL.
         io_functions->set_function(
-          name    = CONV string( ls_action-action_id )
-          text    = CONV string( ls_action-button_text )
-          tooltip = CONV string( ls_action-quickinfo ) ).
+          name    = ls_action-action_id
+          text    = ls_action-button_text
+          tooltip = ls_action-quickinfo ).
       ELSE.
         io_functions->set_function(
-          name    = CONV string( ls_action-action_id )
-          text    = CONV string( ls_action-button_text )
-          tooltip = CONV string( ls_action-quickinfo )
-          icon    = CONV string( ls_action-icon_name ) ).
+          name    = ls_action-action_id
+          text    = ls_action-button_text
+          tooltip = ls_action-quickinfo
+          icon    = ls_action-icon_name ).
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
