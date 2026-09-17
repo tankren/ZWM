@@ -358,10 +358,10 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
     lv_lqnum = is_stock-lqnum.
 
     UPDATE zwm_blocklog_1t
-      SET reason_code = @lv_code
-          reason_text = @lv_text
-          blocker     = @lv_user
-          block_date  = @lv_date
+      SET reason_code = @lv_code,
+          reason_text = @lv_text,
+          blocker     = @lv_user,
+          block_date  = @lv_date,
           block_time  = @lv_time
       WHERE lgnum  = @lv_lgnum
         AND lqnum  = @lv_lqnum
@@ -475,12 +475,12 @@ CLASS zcl_wm_stock_block IMPLEMENTATION.
     lv_lqnum = is_stock-lqnum.
 
     UPDATE zwm_blocklog_1t
-      SET status          = @c_status_released
-          rel_reason_code = @iv_reason_code
-          rel_reason_text = @iv_reason_text
-          releaser        = @lv_user
-          rel_date        = @lv_date
-          rel_time        = @lv_time
+      SET status          = @c_status_released,
+          rel_reason_code = @iv_reason_code,
+          rel_reason_text = @iv_reason_text,
+          releaser        = @lv_user,
+          rel_date        = @lv_date,
+          rel_time        = @lv_time,
           tanum_rel       = @iv_tanum
       WHERE lgnum = @lv_lgnum
         AND lqnum = @lv_lqnum
