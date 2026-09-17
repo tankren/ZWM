@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZWM_MSG</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>WM Stock Cockpit</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>No stock found for the selection</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Warehouse number &amp;1 is not maintained in table T340D</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Enter a material</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Enter a warehouse number</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Transfer order &amp;1 created</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>Transfer order could not be created: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>Error calling function module &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>008</MSGNR>
+     <TEXT>Requested quantity &amp;1 exceeds available stock &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>009</MSGNR>
+     <TEXT>Requested quantity must be greater than zero</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>010</MSGNR>
+     <TEXT>Destination storage type is required</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>Destination storage bin is required</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>012</MSGNR>
+     <TEXT>Storage bin &amp;1 is not suitable for stock removal</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>013</MSGNR>
+     <TEXT>&amp;1 &amp;2 scrapped with transfer order &amp;3</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>014</MSGNR>
+     <TEXT>Quant &amp;1 is already blocked with &amp;2 layer(s)</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>015</MSGNR>
+     <TEXT>Maximum of &amp;1 block layers reached for this quant</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>016</MSGNR>
+     <TEXT>Block reason code &amp;1 does not exist</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>017</MSGNR>
+     <TEXT>Block reason code &amp;1 is not valid for layer &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>018</MSGNR>
+     <TEXT>Enter a block reason</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>019</MSGNR>
+     <TEXT>Stock blocked with transfer order &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>020</MSGNR>
+     <TEXT>Release reason must match the block reason</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>021</MSGNR>
+     <TEXT>Block layer &amp;1 released with transfer order &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>022</MSGNR>
+     <TEXT>Block layer &amp;1 released</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>023</MSGNR>
+     <TEXT>No open block layer found for this quant</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>024</MSGNR>
+     <TEXT>Quant &amp;1 is not blocked</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>025</MSGNR>
+     <TEXT>User &amp;1 is not authorized for action &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>026</MSGNR>
+     <TEXT>Select exactly one line</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>027</MSGNR>
+     <TEXT>Select at least one line</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>028</MSGNR>
+     <TEXT>&amp;1 &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>029</MSGNR>
+     <TEXT>No action buttons are configured in table ZWM_STK_ACT_1T</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>030</MSGNR>
+     <TEXT>Action &amp;1 is not configured</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>031</MSGNR>
+     <TEXT>Transfer order &amp;1 confirmed</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>032</MSGNR>
+     <TEXT>Transfer order &amp;1 could not be confirmed</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>033</MSGNR>
+     <TEXT>Destination must differ from the source storage bin</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>034</MSGNR>
+     <TEXT>Enter a plant</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>035</MSGNR>
+     <TEXT>Function module &amp;1 is not available</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>036</MSGNR>
+     <TEXT>Internal error: &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>037</MSGNR>
+     <TEXT>&amp;1 is not a valid storage type</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>038</MSGNR>
+     <TEXT>Storage bin &amp;1 does not exist in storage type &amp;2</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>039</MSGNR>
+     <TEXT>Blocking is not allowed for stock category &amp;1</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZWM_MSG</ARBGB>
+     <MSGNR>040</MSGNR>
+     <TEXT>Block layer &amp;1 is not open</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>
