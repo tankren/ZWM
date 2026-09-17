@@ -62,6 +62,15 @@ DATA: go_msg    TYPE REF TO zcl_wm_msg,
       go_alv    TYPE REF TO zcl_wm_stock_alv,
       gt_stock  TYPE zcl_wm_stock_query=>tt_stock.
 
+* The field table of POPUP_GET_VALUES. It is a single global because a FORM
+* interface must not contain a table parameter: the compiler miscounts such a
+* parameter as three formal parameters ("Different number of parameters in
+* FORM and PERFORM"). It also has to be writable, because POPUP_GET_VALUES
+* fills in what the user typed. It must be declared here, before the FORMs
+* that use it, because a global declaration is only visible from its position
+* in the source onwards.
+DATA gt_fields TYPE TABLE OF sval.
+
 *----------------------------------------------------------------------*
 START-OF-SELECTION.
   PERFORM create_services.
@@ -207,7 +216,8 @@ FORM execute_movement USING is_stock  TYPE zwm_quan_1s
         ls_result  TYPE zcl_wm_stock_action=>ty_result,
         lv_bwart   TYPE bwart,
         lv_ok      TYPE abap_bool,
-        lv_title   TYPE string.
+        lv_title   TYPE string,
+        lv_default TYPE sval-value.
 
   lv_bwart = is_action-bwart.
   IF lv_bwart IS INITIAL.
@@ -216,20 +226,29 @@ FORM execute_movement USING is_stock  TYPE zwm_quan_1s
 
   CLEAR gt_fields.
 
+  " POPUP_GET_VALUES works with character fields, and a variable that is not of
+  " the popup field type is rejected by the compiler, so every default is first
+  " converted into a local of the popup's own type. The same local can be
+  " reused because add_popup_field copies the value straight away.
+  lv_default = is_stock-verme.
   PERFORM add_popup_field USING 'LQUA' 'GESME' 'Requested quantity'
-                                is_stock-verme 'X'.
+                                lv_default 'X'.
 
+  lv_default = lv_bwart.
   PERFORM add_popup_field USING 'T156' 'BWART' 'Movement type'
-                                lv_bwart 'X'.
+                                lv_default 'X'.
 
-  PERFORM add_popup_field USING 'LQUA' 'LGORT' 'Destination storage location'
-                                is_stock-lgort ''.
+  lv_default = is_stock-lgort.
+  PERFORM add_popup_field USING 'LQUA' 'LGORT' 'Dest. storage loc.'
+                                lv_default ''.
 
-  PERFORM add_popup_field USING 'LQUA' 'LGTYP' 'Destination storage type'
-                                is_stock-lgtyp ''.
+  lv_default = is_stock-lgtyp.
+  PERFORM add_popup_field USING 'LQUA' 'LGTYP' 'Dest. storage type'
+                                lv_default ''.
 
-  PERFORM add_popup_field USING 'LQUA' 'LGPLA' 'Destination storage bin'
-                                is_stock-lgpla ''.
+  lv_default = is_stock-lgpla.
+  PERFORM add_popup_field USING 'LQUA' 'LGPLA' 'Dest. storage bin'
+                                lv_default ''.
 
   lv_title = 'Inventory control station'.
   PERFORM show_popup USING lv_title CHANGING lv_ok.
@@ -266,7 +285,8 @@ FORM execute_block USING is_stock  TYPE zwm_quan_1s
         lv_layer   TYPE zwm_layer,
         lv_chosen  TYPE zwm_layer,
         lv_ok      TYPE abap_bool,
-        lv_title   TYPE string.
+        lv_title   TYPE string,
+        lv_default TYPE sval-value.
 
   lv_bwart = is_action-bwart.
   IF lv_bwart IS INITIAL.
@@ -291,9 +311,9 @@ FORM execute_block USING is_stock  TYPE zwm_quan_1s
 
   CLEAR gt_fields.
 
-  PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'LAYER'
-                                'Layer to change (blank = add new layer)'
-                                lv_layer ''.
+  lv_default = lv_layer.
+  PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'LAYER' 'Layer to change'
+                                lv_default ''.
 
   PERFORM add_popup_field USING 'ZWM_BLOCKLOG_1T' 'DEPT' 'Department'
                                 '' 'X'.
@@ -346,7 +366,7 @@ FORM execute_release USING is_stock  TYPE zwm_quan_1s
         lv_bwart   TYPE bwart,
         lv_ok      TYPE abap_bool,
         lv_title   TYPE string,
-        lv_default TYPE zwm_layer.
+        lv_default TYPE sval-value.
 
   lv_bwart = is_action-bwart.
   IF lv_bwart IS INITIAL.
@@ -527,17 +547,10 @@ ENDFORM.
 * carries its own screen, so the report needs no dynpro of its own and
 * stays fully abapGit-serialisable.
 *
-* The field table is a single global because a FORM interface must not
-* contain a table parameter: the compiler miscounts such a parameter as
-* three formal parameters ("Different number of parameters in FORM and
-* PERFORM"). It also has to be writable, since POPUP_GET_VALUES fills in
-* what the user typed.
 *----------------------------------------------------------------------*
-DATA gt_fields TYPE TABLE OF sval.
-
 FORM add_popup_field USING iv_tabname   TYPE sval-tabname
                            iv_fieldname TYPE sval-fieldname
-                           iv_text      TYPE sval-fieldtext
+                           iv_text      TYPE string
                            iv_value     TYPE sval-value
                            iv_required  TYPE sval-field_obl.
   DATA ls_field TYPE sval.
