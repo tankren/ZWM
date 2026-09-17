@@ -568,11 +568,14 @@ FORM value_help_lgnum.
         lt_fieldtab TYPE STANDARD TABLE OF dfies WITH EMPTY KEY,
         ls_fieldtab TYPE dfies.
 
+  " The warehouse name is optional. A warehouse that has no text in the logon
+  " language must still appear in the value list, so the language condition
+  " belongs in the ON clause of a left outer join and not in WHERE.
   SELECT t340d~lgnum, t300t~lnumt
     FROM t340d
-    INNER JOIN t300t ON t300t~lgnum = t340d~lgnum
-    INTO CORRESPONDING FIELDS OF TABLE @lt_values
-    WHERE t300t~spras = @sy-langu.
+    LEFT OUTER JOIN t300t ON t300t~lgnum = t340d~lgnum
+                         AND t300t~spras = @sy-langu
+    INTO CORRESPONDING FIELDS OF TABLE @lt_values.
 
   IF lt_values IS INITIAL.
     RETURN.
