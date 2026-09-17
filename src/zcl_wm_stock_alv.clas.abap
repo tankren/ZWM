@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">WM stock cockpit - result list</p>"
+"! <p class="shorttext synchronized">WM stock cockpit - result list</p>"
 "! Presents the stock list and builds its toolbar from the action
 "! configuration table ZWM_STK_ACT_1T.
 "!

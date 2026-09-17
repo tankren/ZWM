@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">WM stock cockpit - quant query</p>
+"! <p class="shorttext synchronized">WM stock cockpit - quant query</p>
 "! Reads warehouse stock (quants) and enriches it with material, valuation and
 "! blocking information. This class is read-only and has no user-interface
 "! dependency, so it can be reused by any report or test.

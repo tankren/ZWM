@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">WM stock cockpit - block and unblock</p>"
+"! <p class="shorttext synchronized">WM stock cockpit - block and unblock</p>"
 "! Implements the multi-layer blocking of a quant as required by the
 "! warehouse specification.
 "!

@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">WM stock cockpit - action configuration</p>
+"! <p class="shorttext synchronized">WM stock cockpit - action configuration</p>
 "! Reads the cockpit configuration tables and answers the questions the UI and
 "! the business logic ask: which buttons exist, what do they do, which reason
 "! codes are allowed, and is the user allowed to use them.

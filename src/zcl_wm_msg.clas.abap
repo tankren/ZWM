@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">Message collection for the WM Stock Cockpit</p>
+"! <p class="shorttext synchronized">Message collection for the WM Stock Cockpit</p>
 "! <p>Central access to message class ZWM_MSG. Business logic never contains literal
 "! message texts: it collects messages here and the caller decides how to present
 "! them (status bar, ALV, popup).</p>

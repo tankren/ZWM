@@ -1,4 +1,4 @@
-﻿"! <p class="shorttext synchronized">WM stock cockpit - stock movements</p>"
+"! <p class="shorttext synchronized">WM stock cockpit - stock movements</p>"
 "! Executes the quantity-based movements of the cockpit: transfers and scrap.
 "!
 "! Both are "create a transfer order" operations that differ only in the
